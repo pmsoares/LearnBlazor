@@ -1,38 +1,24 @@
 ﻿@page "/learnBlazor/demoproduct"
 
 <h2 class="text-primary">DemoProduct</h2>
+<p>Favorite Count: @FavoriteCount</p>
+<p>Selected Product: @SelectedProduct</p>
+
 <div class="p-2 mt-2">
     <div class="row">
         @foreach (var prod in ProductList)
         {
-            <div class="bg-light border col-6">
-                <h4 class="text-secondary">Product - @prod.Id</h4>
-                Name - @prod.Name<br />
-                Show Properties: <input type="checkbox" @bind="prod.IsActive" />
-
-                @if (prod.IsActive)
-                {
-                    @foreach (var prodProp in prod.ProductProperties!)
-                    {
-                        <p>@prodProp.Key - @prodProp.Value</p>
-                    }
-                }
-                <br />
-                <_DeleteButtonComponent productId="@prod.Id" productName="@prod.Name">
-
-                </_DeleteButtonComponent>
-            </div>
+            <_IndividualProduct product="prod"
+                                OnFavoriteUpdated="FavoriteCountChange"
+                                OnSelectedProductUpdated="UpdateSelectedProduct">
+            </_IndividualProduct>
         }
-    </div>
-
-    <div class="row pt-4">
-        <input type="button" class="btn btn-success" style="width:100px" value="Counter" @onclick="() => IncrementCount(5)" />
-        Counter: @Count
     </div>
 </div>
 
 @code {
-    public int Count { get; set; } = 0;
+    public int FavoriteCount { get; set; } = 0;
+    public string SelectedProduct { get; set; } = string.Empty;
 
     List<Product> ProductList = new();
 
@@ -67,8 +53,20 @@
         });
     }
 
-    private void IncrementCount(int counter)
+    protected void FavoriteCountChange(bool isSelected)
     {
-        Count += counter;
+        if (isSelected)
+        {
+            FavoriteCount++;
+        }
+        else
+        {
+            FavoriteCount--;
+        }
+    }
+
+    protected void UpdateSelectedProduct(string productName)
+    {
+        SelectedProduct = productName;
     }
 }
